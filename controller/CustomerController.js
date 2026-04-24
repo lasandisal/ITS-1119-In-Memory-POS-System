@@ -40,30 +40,25 @@ export function loadCustomerTable(filter = "") {
 }
 
 function setupEventListeners() {
-    // Add Button Click
     $('.btn-add-customer').on('click', () => {
         $('#customerModalLabel').text("Register Customer");
         $('#customerModal').removeAttr('data-edit-id');
         $('#customerForm')[0].reset();
     });
 
-    // Row Click for Update
     $(document).on('click', '#customerTableBody tr', function() {
         const id = $(this).find('.customer-id-cell').text().trim();
         if(id) fillModalForUpdate(id);
     });
 
-    // Save Button
     $('#btnSaveCustomer').on('click', () => handleSave());
 
     $(document).on('change', '.customer-status-toggle', function(e) {
     const id = $(this).data('id');
     const isChecked = $(this).prop('checked');
-    
-    // 1. Update the Model
+
     CustModel.updateStatus(id, isChecked);
     
-    // 2. Update the Current UI Row immediately
     const row = $(this).closest('tr');
     if (!isChecked) {
         row.addClass('customer-row-inactive');
@@ -71,7 +66,6 @@ function setupEventListeners() {
         row.removeClass('customer-row-inactive');
     }
 
-    // 3. THE SYNC: Refresh the POS dropdown automatically
     loadCustomerDropdown(); 
 });
 }

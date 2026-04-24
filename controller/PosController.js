@@ -11,8 +11,6 @@ export function initializePos() {
     setInterval(updateHeaderInfo, 1000);
 }
 
-// controller/PosController.js
-
 export function loadProductGrid(filter = "") {
     const itemGrid = $('.item-grid');
     const itemTemplate = document.getElementById('pos-item-template');
@@ -20,16 +18,13 @@ export function loadProductGrid(filter = "") {
     
     itemGrid.empty(); 
 
-    // 1. Filter the database
     const filteredItems = itemDB.filter(item => 
         item.name.toLowerCase().includes(filter.toLowerCase())
     );
 
-    // 2. CHECK FOR EMPTY RESULTS USING TEMPLATE
     if (filteredItems.length === 0) {
         const clone = emptyTemplate.content.cloneNode(true);
         
-        // Inject the dynamic part (the user's search query) into the template clone
         $(clone).find('.no-results-msg').html(
             `We couldn't find anything matching "<strong>${filter}</strong>". <br> Try a different keyword!`
         );
@@ -38,7 +33,6 @@ export function loadProductGrid(filter = "") {
         return; 
     }
 
-    // 3. Render items using the product template
     filteredItems.forEach(item => {
         const cartItem = cart.find(c => c.id === item.id);
         const reservedQty = cartItem ? cartItem.orderQty : 0;
@@ -68,16 +62,10 @@ export function loadCustomerDropdown() {
     const customerSelect = $('.customer-selector select');
     customerSelect.empty();
 
-    // 1. Standard Placeholder: Keeps the UI clean before a selection is made
     customerSelect.append('<option value="" selected disabled>Select Customer</option>');
-
-    // 2. DEFAULT CUSTOMER: Added for quick "Walk-in" sales
     customerSelect.append('<option value="CUS-000">CUS-000 - Walk-in Guest</option>');
-
-    // 3. Filter for ACTIVE customers only to ensure data integrity
     const activeCustomers = customerDB.filter(cust => cust.status === "Active");
 
-    // 4. Append the rest of your registered active customers
     activeCustomers.forEach(customer => {
         const option = `<option value="${customer.id}">${customer.id} - ${customer.name}</option>`;
         customerSelect.append(option);
@@ -102,20 +90,18 @@ export function loadUserSession(user) {
 }
 
 function setupEventListeners() {
-    // 1. Click Product Card 
+
     $(document).on('click', '.item-card', function() {
         const itemId = $(this).data('id');
         addToCart(itemId);
     });
 
-    // 2. Click Qty Buttons in Cart
     $(document).on('click', '.qty-btn', function() {
         const itemId = $(this).closest('.cart-row').data('id');
         const action = $(this).text();
         updateCartQty(itemId, action);
     });
 
-    // 3. Proceed to Checkout
     $('.btn-proceed').on('click', function() {
         placeOrder();
     });
@@ -124,7 +110,6 @@ function setupEventListeners() {
 function addToCart(itemId) {
     const item = itemDB.find(i => i.id === itemId);
     
-    // Check Status AND physical quantity
     if (item.status !== "Available" || item.qty <= 0) {
         alert("This item is currently unavailable or out of stock!");
         return;
@@ -133,7 +118,6 @@ function addToCart(itemId) {
     const existingItem = cart.find(cartItem => cartItem.id === itemId);
     const reservedQty = existingItem ? existingItem.orderQty : 0;
 
-    // Check if we are trying to add more than what's left in the kitchen
     if (reservedQty < item.qty) {
         if (existingItem) {
             existingItem.orderQty++;
@@ -181,16 +165,15 @@ function renderCart() {
     const emptyTemplate = document.getElementById('empty-cart-template');
     
     cartList.empty(); 
-    let total = 0; // This is the variable that survives the loop!
-
+    let total = 0; 
     if (cart.length === 0) {
         const clone = emptyTemplate.content.cloneNode(true);
         cartList.append(clone);
     } 
     else {
         cart.forEach(item => {
-            const itemSubtotal = item.price * item.orderQty; // Rename for clarity
-            total += itemSubtotal; // Add to our accumulator
+            const itemSubtotal = item.price * item.orderQty; 
+            total += itemSubtotal; 
 
             const clone = itemTemplate.content.cloneNode(true);
             const row = $(clone).find('.cart-row');
@@ -203,11 +186,9 @@ function renderCart() {
         });
     }
 
-    // THE FIX: Use 'total' instead of 'subtotal'
     const discount = parseFloat($('#pos-discount-input').val()) || 0;
-    const netTotal = total - discount; // Use the accumulated total here
+    const netTotal = total - discount; 
 
-    // 3. Update Total Display using 'total' for the subtotal line
     $('#pos-subtotal').text(`LKR ${total.toLocaleString(undefined, {minimumFractionDigits: 2})}`);
     $('.total-amount').text(`LKR ${netTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}`);
     
@@ -230,8 +211,8 @@ function placeOrder() {
         time: new Date().toLocaleTimeString(),
         customerId: selectedCustomerId,
         adminId: usersDB[0].userId,
-        discount: discount, // SAVING the discount to your mock DB
-        total: subTotal - discount, // Saving the Final Price
+        discount: discount,
+        total: subTotal - discount, 
         orderDetails: cart.map(item => ({
             itemId: item.id,
             qty: item.orderQty,
@@ -245,11 +226,8 @@ function placeOrder() {
     cart.forEach(cartItem => {
         const item = itemDB.find(i => i.id === cartItem.id);
         
-        // 1. Deduct quantity
         item.qty -= cartItem.orderQty;
 
-        // 2. AUTOMATIC STATUS UPDATE: 
-        // If it reaches 0, flip the status automatically
         if (item.qty <= 0) {
             item.status = "Out of Stock";
         }
@@ -257,7 +235,6 @@ function placeOrder() {
 
     cart = [];
     renderCart();
-    // loadProductGrid(); 
     loadOrderTable();
     alert("Order Placed Successfully!");
     console.log("Updated Orders List:", ordersList);

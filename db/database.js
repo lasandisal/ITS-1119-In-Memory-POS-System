@@ -2,8 +2,7 @@ import { Customer } from "../dto/Customer.js";
 import { Item } from "../dto/Item.js";
 import { User } from "../dto/User.js";
 
-// --- CUSTOMERS ---
-// Fields: ID, Name, Contact, Address, Status
+
 export const customerDB = [
     new Customer("CUS-001", "Lasandi Uvindya", "0771234567", "Ahangama", "Active"),
     new Customer("CUS-002", "Nilmi Rathnayake", "0712233445", "Galle", "Active"),
@@ -12,8 +11,7 @@ export const customerDB = [
     new Customer("CUS-005", "Niruni Fonseka", "0751122334", "Kandy", "Active")
 ];
 
-// --- ITEMS ---
-// Fields: ID, Name, Price, Qty, Category,Status
+
 export const itemDB = [
     new Item("ITM-001", "Butter Croissant", 600.00, 25, "Foods", "Available"),
     new Item("ITM-002", "Hot Macchiato", 1500.00, 50, "Drinks", "Available"),
@@ -23,8 +21,7 @@ export const itemDB = [
     new Item("ITM-006", "Blueberry Cheesecake", 1800.00, 10, "Foods", "Available")
 ];
 
-// --- USERS (Staff) ---
-// Fields: ID, Username, Name, Password, Role, Status
+
 export const usersDB = [
     {
         userId: "USR-001",
@@ -44,8 +41,7 @@ export const usersDB = [
     }
 ];
 
-// --- ORDERS (Historical Data) ---
-// Fields: saleId, date, time, customerId, adminId (who sold it), total, items
+
 export const ordersList = [
     { 
         id: "ORD-001", 

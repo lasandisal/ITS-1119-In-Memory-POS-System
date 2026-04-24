@@ -19,19 +19,3 @@ $(document).ready(function() {
     setupGlobalSearch();
 });
 
-// $('#globalSearch').on('input', function() {
-//     if ($(this).val().length > 0) {
-//         $('#btnClearSearch').fadeIn(200);
-//     } else {
-//         $('#btnClearSearch').fadeOut(200);
-//     }
-// });
-
-// $('#btnClearSearch').on('click', function() {
-//     $('#globalSearch').val('');
-//     $(this).fadeOut(200);
-    
-//     executeSearch(""); 
-// });
-
-    

@@ -43,26 +43,22 @@ export function setupGlobalSearch() {
     const searchInput = $('#globalSearch');
     const clearBtn = $('#btnClearSearch');
 
-    // Listener for typing
     searchInput.on('input', function() {
         const query = $(this).val().toLowerCase();
         
-        // Show/Hide X button
         if (query.length > 0) {
             clearBtn.fadeIn(200);
         } else {
             clearBtn.fadeOut(200);
         }
 
-        // Context-Aware Search
         executeSearch(query);
     });
 
-    // Listener for Clear Button Click
     clearBtn.on('click', function() {
-        searchInput.val(''); // Empty the input
-        $(this).fadeOut(200); // Hide the X
-        executeSearch("");    // Reset the view to show all data
+        searchInput.val(''); 
+        $(this).fadeOut(200);
+        executeSearch("");    
     });
 }
 

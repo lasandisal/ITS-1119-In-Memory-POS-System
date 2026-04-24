@@ -1,7 +1,6 @@
 import { itemDB } from "../db/database.js";
 import { Item } from "../dto/Item.js";
 
-// Business Rules (Regex) stay in the Model
 const nameRegex = /^[A-Za-z0-9 ]{3,20}$/;
 const priceRegex = /^[0-9]+(\.[0-9]{1,2})?$/;
 const qtyRegex = /^[0-9]+$/;

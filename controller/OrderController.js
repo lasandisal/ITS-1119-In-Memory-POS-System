@@ -9,29 +9,23 @@ export function loadOrderTable(filter = "") {
     const template = document.getElementById('order-row-template');
     tableBody.empty();
 
-    // 1. Update Total Sales Count Card
     $('#total-sales-count').text(ordersList.length);
 
-    // 2. Filter and Render
     ordersList.filter(order => order.id.includes(filter) || order.customerId.includes(filter))
     .forEach(order => {
         const clone = template.content.cloneNode(true);
         const row = $(clone).find('tr');
 
-        const discountVal = order.discount || 0; // Fallback to 0 if missing
+        const discountVal = order.discount || 0;
         row.find('.order-discount-cell').text(`LKR ${discountVal.toLocaleString(undefined, {minimumFractionDigits: 2})}`);
 
-        // Find Customer and User Names
         const customer = customerDB.find(c => c.id === order.customerId);
         const admin = usersDB.find(u => u.userId === order.adminId);
 
-        // Map Data
         row.find('.order-date-time').text(`${order.date}, ${order.time}`);
         row.find('.order-meta-info').text(`${order.customerId}, by ${admin ? admin.name : 'Unknown'}`);
         row.find('.order-id-cell').text(`#${order.id}`);
         row.find('.order-total-cell').text(order.total.toLocaleString(undefined, {minimumFractionDigits: 2}));
-
-        // Store ID for modal
         row.attr('data-order-id', order.id);
 
         tableBody.append(row);
