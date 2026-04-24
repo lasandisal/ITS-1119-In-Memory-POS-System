@@ -6,9 +6,705 @@
   <title>POS System</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/popup.css">
 </head>
 <body class="pos-active">
+     <!-- 0. LOGIN SCREEN LAYER -->
+    <section id="login-layer">
+        <div class="login-outer-card">
+            <div class="login-logo-side">
+                <img src="assets/logo/ocean cafe logo new.png" alt="Ocean Cafe Logo">
+            </div>
+            <div class="login-form-side">
+                <h1 class="welcome-text">Welcome Back!</h1>
+                <div class="mb-3">
+                    <label class="form-label text-white small">Username</label>
+                    <input type="text" id="username" class="login-input" placeholder="Enter username" value="admin">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label text-white small">Password</label>
+                    <input type="password" id="password" class="login-input" placeholder="Enter password" value="123">
+                </div>
+                <button id="btn-login-submit" class="login-submit-btn">
+                    <i class="fas fa-sign-in-alt me-2"></i> Login
+                </button>
+            </div>
+        </div>
+    </section>
+
+  <nav id="sidebar">
+        <div class="sidebar-brand">
+             <img src="assets/logo/ocean cafe logo new.png" alt="Ocean Cafe Logo">
+            <div class="brand-title">
+        <span class="fw-bold h5 mb-0 text-white">OCEAN <span class="accent-color">CAFE</span></span>
+            </div>
+            <div class="small-text text-white-50 mt-1">Point of Sale System</div>
+        </div>
+
+        <div class="sidebar-nav-container">
+
+           
+            <a class="nav-item active" data-section="pos">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="nav-label">POS</span>
+            </a>
+          
+            <a class="nav-item" data-section="products">
+                <i class="fas fa-box"></i>
+                <span class="nav-label">Products</span>
+            </a>
+          
+            <a class="nav-item" data-section="customers">
+                <i class="fas fa-users"></i>
+                <span class="nav-label">Customers</span>
+            </a>
+            <a class="nav-item" data-section="employee">
+                <i class="fas fa-id-badge"></i>
+                <span class="nav-label">Employee Manage</span>
+            </a>
+
+            <a class="nav-item" data-section="dashboard">
+                <i class="fas fa-chart-pie"></i>
+                <span class="nav-label">Dashboard</span>
+            </a>
+            <a class="nav-item" data-section="reports">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span class="nav-label">Sales Reports</span>
+            </a>
+
+        <div class="sidebar-footer">
+            <a class="nav-item logout-item" id="btn-logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="nav-label">Log Out</span>
+            </a>
+        </div>
+    </nav>
+
+    <div id="main-wrapper">
+        <header>
+            <div class="search-bar-container">
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="globalSearch" placeholder="Search">
+                    <i class="fas fa-times-circle clear-search-icon" id="btnClearSearch" style="display: none;"></i>
+                </div>
+            </div>
+
+            <div class="header-controls">
+                <div class="time-date-block">
+                    <div class="text-end">
+                        <div class="clock-time" id="js-clock">00:00:00</div>
+                        <div class="clock-date" id="js-date">Loading...</div>
+                    </div>
+                    <i class="far fa-bell fs-5 text-white-50 notification-bell"></i>
+                </div>
+                
+                <div class="user-widget">
+                    <div class="user-text">
+                        <span class="user-name">Selin Ercel</span>
+                        <span class="user-role">Cashier</span>
+                    </div>
+                    <div class="user-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                </div>
+            </div>
+
+        </header>
+
+        <!-- dynamically changing -->
+        <!-- <main id="viewport"> -->
+
+          
+        <main id="viewport" class="p-3">
+  <section id="pos-view" class="view-section active">
+    <div class="container-fluid h-100">
+      <div class="row h-100 g-3">
+        
+        <div class="col-12 col-lg-8 product-selection">
+          <div class="item-grid">
+            <div class="item-card">
+              <div class="item-thumb">
+                <i class="fas fa-croissant product-icon"></i>
+              </div>
+              <div class="item-info">
+                <span class="item-name">Croissant</span>
+                <span class="item-price">LKR 600.00</span>
+              </div>
+            </div>
+            <div class="item-card">
+              <div class="item-thumb">
+                <i class="fas fa-mug-hot product-icon"></i>
+              </div>
+              <div class="item-info">
+                <span class="item-name">Hot Macchiato</span>
+                <span class="item-price">LKR 1,500.00</span>
+              </div>
+            </div>
+            <div class="item-card">
+              <div class="item-thumb">
+                <i class="fas fa-bread-slice product-icon"></i>
+              </div>
+              <div class="item-info">
+                <span class="item-name">French Bread</span>
+                <span class="item-price">LKR 800.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="cart-pane w-100">
+                <div class="cart-header">CURRENT SALE</div>
+                <div class="cart-list"></div>
+                
+                <!-- <div class="cart-footer">
+                    <div class="customer-selector mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text border-0"><i class="fas fa-user text-muted"></i></span>
+                            <select class="form-select border-0"></select>
+                        </div>
+                    </div>
+                    <div class="total-display mb-3">
+                        <span class="total-label">Total</span>
+                        <span class="total-amount text-dark">LKR 0.00</span>
+                    </div>
+                    <button class="btn-proceed">PROCEED TO CHECKOUT</button>
+                </div> -->
+
+                <!-- <div class="cart-footer">
+                    <div class="customer-selector mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text border-0 bg-light">
+                                <i class="fas fa-user text-muted"></i>
+                            </span>
+                            <select class="form-select border-0 bg-light">
+                            </select>
+                        </div>
+                    <div class="d-flex justify-content-between mb-2 small text-muted">
+                        <span>Subtotal</span>
+                        <span id="pos-subtotal">LKR 0.00</span>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text border-0 bg-light">
+                            <i class="fas fa-percent text-muted"></i>
+                        </span>
+                        <input type="number" id="pos-discount-input" class="form-control border-0 bg-light" placeholder="Discount Amount">
+                    </div>
+                    <div class="total-display mb-3">
+                        <span class="total-label">Net Total</span>
+                        <span class="total-amount text-dark">LKR 0.00</span>
+                    </div>
+                    <button class="btn-proceed">PROCEED TO CHECKOUT</button>
+                </div>
+            </div>
+        </div> -->
+
+        <div class="cart-footer p-2 px-3"> <div class="customer-selector mb-1">
+        <div class="input-group input-group-sm"> <span class="input-group-text border-0 bg-light"><i class="fas fa-user text-muted"></i></span>
+            <select class="form-select border-0 bg-light small"></select>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between mb-1 small text-muted px-1" style="font-size: 0.75rem;">
+        <span>Subtotal</span>
+        <span id="pos-subtotal">LKR 0.00</span>
+    </div>
+
+    <div class="input-group input-group-sm mb-2">
+        <span class="input-group-text border-0 bg-light"><i class="fas fa-percent text-muted"></i></span>
+        <input type="number" id="pos-discount-input" class="form-control border-0 bg-light" placeholder="Disc.">
+    </div>
+
+    <div class="total-display py-1 mb-2 border-top border-secondary border-opacity-10">
+        <span class="total-label small fw-bold">Net Total</span>
+        <span class="total-amount text-dark h5 m-0 fw-bold">LKR 0.00</span> </div>
+
+    <button class="btn-proceed py-2 small">PROCEED TO CHECKOUT</button>
+</div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="products-view" class="view-section" style="display:none;">
+    <div class="inventory-card">
+        <div class="inventory-header">
+            <div class="header-titles">
+                <h2 class="m-0 fw-bold">Products</h2>
+                <small class="text-uppercase tracking-wider">Inventory Master</small>
+            </div>
+            <button class="btn-add-product" data-bs-toggle="modal" data-bs-target="#itemModal">
+                <i class="fas fa-plus"></i> Add Product
+            </button>
+        </div>
+
+        <div class="inventory-body">
+            <table class="table custom-inventory-table">
+                <thead>
+                    <tr>
+                        <th>PRODUCT DETAILS</th>
+                        <th>CATEGORY</th>
+                        <th class="text-center">QTY ON HAND</th> <th class="text-end">PRICE</th>
+                        <th class="text-end">STATUS</th>
+                    </tr>
+                </thead>
+
+                
+
+                <tbody id="itemTableBody">
+                    
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section id="customers-view" class="view-section" style="display:none;">
+    <div class="inventory-card">
+        <div class="inventory-header">
+            <div class="header-titles">
+                <h2 class="m-0 fw-bold">Customers</h2>
+                <small class="text-uppercase tracking-wider">Relationship Management</small>
+            </div>
+            <button class="btn btn-add-customer" data-bs-toggle="modal" data-bs-target="#customerModal">
+                <i class="fas fa-user-plus me-2"></i> Register Customer
+            </button>
+        </div>
+
+        <div class="inventory-body">
+            <table class="table custom-inventory-table">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">CUSTOMER DETAILS</th>
+                        <th style="width: 20%;">CONTACT</th>
+                        <th style="width: 30%;">ADDRESS</th>
+                        <th class="text-end" style="width: 20%;">STATUS</th>
+                    </tr>
+                </thead>
+                <tbody id="customerTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section id="employee-view" class="view-section" style="display:none;">
+    <div class="inventory-card">
+        <div class="inventory-header">
+            <div class="header-titles">
+                <h2 class="m-0 fw-bold">Employees</h2>
+                <small class="text-uppercase tracking-wider">Staff & Access Control</small>
+            </div>
+            <button class="btn btn-add-employee" data-bs-toggle="modal" data-bs-target="#employeeModal">
+                <i class="fas fa-user-shield me-2"></i> Add Employee
+            </button>
+        </div>
+
+        <div class="inventory-body">
+            <table class="table custom-inventory-table">
+                <thead>
+                    <tr>
+                        <th>EMPLOYEE</th>
+                        <th>USERNAME</th>
+                        <th>ROLE</th>
+                        <th class="text-end">STATUS</th>
+                    </tr>
+                </thead>
+                <tbody id="employeeTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section id="reports-view" class="view-section" style="display:none;">
+    <!-- <div class="report-summary-container mb-4">
+        <div class="total-sales-card">
+            <div class="sale-badge-icon">
+                <i class="fas fa-certificate"></i>
+                <span class="badge-text">SALE</span>
+            </div>
+            <div class="sale-card-info">
+                <small class="text-uppercase fw-bold opacity-50">Total Sales</small>
+                <h2 id="total-sales-count" class="m-0 fw-bold">0</h2>
+            </div>
+        </div>
+    </div> -->
+
+    <div class="inventory-card">
+        <div class="inventory-header">
+            <div class="header-titles">
+                <h2 class="m-0 fw-bold">Order History</h2>
+                <small class="text-uppercase tracking-wider">Transaction Records</small>
+            </div>
+        </div>
+
+        <div class="inventory-body">
+            <table class="table custom-inventory-table">
+                <thead>
+                    <tr>
+                        <th>SALE</th>
+                        <th>SALE ID</th>
+                        <th class="text-center">DISCOUNT</th>
+                        <th class="text-end">TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody id="orderTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section id="dashboard-view" class="view-section" style="display:none;">
+    <div class="dashboard-grid">
+        <div class="stat-card revenue-card">
+            <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+            <div class="stat-content">
+                <small>Total Revenue</small>
+                <h2 id="dash-revenue">LKR 0.00</h2>
+            </div>
+        </div>
+
+        <div class="stat-card orders-card">
+            <div class="stat-icon"><i class="fas fa-shopping-bag"></i></div>
+            <div class="stat-content">
+                <small>Total Orders</small>
+                <h2 id="dash-orders">0</h2>
+            </div>
+        </div>
+
+        <div class="stat-card customers-card">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-content">
+                <small>Active Customers</small>
+                <h2 id="dash-customers">0</h2>
+            </div>
+        </div>
+
+        <div class="stat-card alert-card">
+            <div class="stat-icon text-danger"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="stat-content">
+                <small>Low Stock Items</small>
+                <h2 id="dash-low-stock">0</h2>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+
+<!-- =============================== Modals =============================== -->
+
+
+<div class="modal fade" id="itemModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content ocean-add-product-modal">
+            
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-navy" id="itemModalLabel">Add Product</h5>
+                <button type="button" class="btn-close btn-close-custom" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4 pt-0">
+                <div class="row align-items-center">
+                    
+                    <div class="col-md-5 text-center p-4">
+                        <i class="fas fa-box-open large-placeholder-icon"></i>
+                    </div>
+
+                    <div class="col-md-7">
+                        <form id="itemForm">
+                            <div class="custom-select-group mb-4">
+                                <div class="select-icon"><i class="fas fa-tag"></i></div>
+                                <select class="form-select custom-select-control" id="itemCategory">
+                                    <option selected disabled>Category</option>
+                                    <option value="Drinks">Drinks</option>
+                                    <option value="Foods">Foods</option>
+                                </select>
+                            </div>
+
+                            <div class="form-input-pair mb-3">
+                                <label for="itemName" class="form-label text-navy">Product Name :</label>
+                                <input type="text" class="form-control ocean-input" id="itemName">
+                            </div>
+
+                            <div class="form-input-pair mb-4">
+                                <label for="itemPrice" class="form-label text-navy">Price :</label>
+                                <input type="number" class="form-control ocean-input" id="itemPrice">
+                            </div>
+
+                            <div class="form-input-pair mb-4">
+                                <label for="itemQty" class="form-label text-navy">Quantity :</label>
+                                <input type="number" class="form-control ocean-input" id="itemQty" min="0" value="0">
+                            </div>
+
+                            <div class="text-center">
+                        
+                                <br>
+                                <button type="button" class="btn btn-save-pill" id="btnSaveItem">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+
+    <div class="modal fade" id="customerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content ocean-add-product-modal"> <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-navy" id="customerModalLabel">Register Customer</h5>
+                <button type="button" class="btn-close btn-close-custom" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4 pt-0">
+                <div class="row align-items-center">
+                    <div class="col-md-5 text-center p-4 customer-modal-graphic">
+                        <i class="fas fa-user-tie large-placeholder-icon"></i>
+                    </div>
+
+                    <div class="col-md-7">
+                        <form id="customerForm">
+                            <div class="form-input-pair mb-3">
+                                <label class="form-label text-navy">Full Name :</label>
+                                <input type="text" class="form-control ocean-input" id="custName" placeholder="e.g. Lasandi Uvindya">
+                            </div>
+
+                            <div class="form-input-pair mb-3">
+                                <label class="form-label text-navy">Contact :</label>
+                                <input type="tel" class="form-control ocean-input" id="custContact" placeholder="07XXXXXXXX">
+                            </div>
+
+                            <div class="form-input-pair mb-4">
+                                <label class="form-label text-navy">Address :</label>
+                                <input type="text" class="form-control ocean-input" id="custAddress" placeholder="Enter residential address">
+                            </div>
+
+                            <div class="text-center">
+                                <button type="button" class="btn btn-save-pill px-5" id="btnSaveCustomer">Save Customer</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="employeeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content ocean-add-product-modal">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-navy" id="employeeModalLabel">Add Employee</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 pt-0">
+                <div class="row align-items-center">
+                    <div class="col-md-5 text-center p-4">
+                        <i class="fas fa-users-cog large-placeholder-icon"></i>
+                    </div>
+                    <div class="col-md-7">
+                        <form id="employeeForm">
+                            <div class="mb-3">
+                                <label class="form-label text-navy">Full Name</label>
+                                <input type="text" class="form-control ocean-input" id="empName" placeholder="e.g. S.A. Lasandi">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-navy">Username</label>
+                                    <input type="text" class="form-control ocean-input" id="empUsername" placeholder="login_id">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-navy">Role</label>
+                                    <select class="form-select ocean-input" id="empRole">
+                                        <option value="Cashier">Cashier</option>
+                                        <option value="Manager">Manager</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label text-navy">Password</label>
+                                <input type="password" class="form-control ocean-input" id="empPassword" placeholder="••••••••">
+                            </div>
+                            <div class="text-center">
+                                <button type="button" class="btn btn-save-pill px-5" id="btnSaveEmployee">Save Employee</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content ocean-add-product-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold text-navy">Order Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="order-items-container" class="mb-3">
+                    </div>
+                <hr class="opacity-10">
+                <div class="d-flex justify-content-between fw-bold text-navy">
+                    <span>Grand Total</span>
+                    <span id="detail-grand-total"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- =================================== Templates ===================================-->
+
+    <template id="item-row-template">
+                    <tr class="item-row" style="cursor: pointer;">
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="product-icon-bg"><i class="fas product-icon"></i></div>
+                                <div>
+                                    <span class="product-id-cell small text-primary fw-bold d-block"></span>
+                                    <span class="product-name fw-bold text-dark"></span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="product-category"></td>
+                        <td class="text-center">
+                            <span class="qty-badge badge rounded-pill border px-3 py-2"></span>
+                        </td>
+                        <td class="product-price fw-bold text-dark text-end"></td>
+                        <td class="text-end">
+                            <label class="switch" onclick="event.stopPropagation()">
+                                <input type="checkbox" class="status-toggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </td>
+                    </tr>
+                </template>
+
+    <template id="pos-item-template">
+    <div class="item-card">
+        <div class="item-thumb">
+            <i class="fas product-icon" style="font-size: 2.5rem; color: #00b4d8;"></i>
+        </div>
+        <div class="item-info">
+            <span class="item-name"></span>
+            <span class="item-price"></span>
+        </div>
+        <small class="text-muted"><strong class="qty-stock"></strong> in stock</small>
+        </div>
+    </template>
+
+    <template id="no-results-template">
+    <div class="no-results-container">
+        <div class="no-results-icon">
+            <i class="fas fa-search-minus"></i>
+        </div>
+        <h3 class="no-results-title">No products found</h3>
+        <p class="no-results-msg"></p>
+    </div>
+    </template>
+
+    <template id="empty-cart-template">
+    <div class="text-center mt-5 opacity-50">
+        <i class="fas fa-shopping-basket mb-2" style="font-size: 2rem;"></i>
+        <p>Cart is empty</p>
+    </div>
+</template>
+
+<template id="cart-item-template">
+    <div class="cart-row">
+        <span class="cart-item-name"></span>
+        <div class="qty-toggle">
+            <button class="qty-btn" type="button">-</button>
+            <span class="qty-val"></span>
+            <button class="qty-btn" type="button">+</button>
+        </div>
+    </div>
+    </template>
+
+    <template id="customer-row-template">
+    <tr>
+        <td>
+            <div class="d-flex align-items-center gap-3">
+                <div class="customer-avatar-bg"><i class="fas fa-user-circle"></i></div>
+                <div>
+                    <span class="customer-id-cell small text-primary fw-bold d-block" style="font-size: 0.7rem;"></span>
+                    <span class="customer-name fw-bold text-dark"></span>
+                </div>
+            </div>
+        </td>
+        <td class="customer-contact text-muted"></td>
+        <td class="customer-address"></td>
+        <td class="text-end">
+            <label class="switch" onclick="event.stopPropagation()">
+                <input type="checkbox" class="customer-status-toggle">
+                <span class="slider round"></span>
+            </label>
+        </td>
+    </tr>
+</template>
+
+<template id="no-customers-template">
+    <tr>
+        <td colspan="5" class="text-center py-5 opacity-50">
+            <i class="fas fa-users-slash mb-3" style="font-size: 3rem;"></i>
+            <h5>No customers found</h5>
+            <p class="small no-cust-msg"></p>
+        </td>
+    </tr>
+</template>
+
+<template id="employee-row-template">
+    <tr>
+        <td>
+            <div class="d-flex align-items-center gap-3">
+                <div class="emp-avatar"><i class="fas fa-id-badge"></i></div>
+                <div>
+                    <span class="emp-id-cell small text-primary fw-bold d-block" style="font-size: 0.7rem;"></span>
+                    <span class="emp-name fw-bold text-dark"></span>
+                </div>
+            </div>
+        </td>
+        <td class="emp-username text-muted"></td>
+        <td><span class="role-badge"></span></td>
+        <td class="text-end">
+            <label class="switch" onclick="event.stopPropagation()">
+                <input type="checkbox" class="emp-status-toggle">
+                <span class="slider round"></span>
+            </label>
+        </td>
+    </tr>
+</template>
+
+<template id="order-row-template">
+    <tr class="order-clickable-row">
+        <td>
+            <div class="d-flex align-items-center gap-3">
+                <div class="order-status-icon"><i class="fas fa-receipt"></i></div>
+                <div>
+                    <span class="order-date-time fw-bold text-dark d-block"></span>
+                    <span class="order-meta-info small text-muted"></span>
+                </div>
+            </div>
+        </td>
+        <td class="order-id-cell fw-bold text-navy"></td>
+        <td class="order-discount-cell text-center text-danger fw-bold"></td> 
+        <td class="order-total-cell text-end fw-bold text-dark"></td>
+    </tr>
+</template>
   
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>

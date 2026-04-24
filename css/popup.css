@@ -1,0 +1,163 @@
+/* --- Ocean Cafe - custom management color palette --- */
+:root {
+    --teal-light: #d3effb; /* Lighter top color */
+    --teal-dark: #00acc1;  /* Darker bottom color */
+    --btn-navy: #006064;  /* Dark teal blue for image button */
+    --btn-green: #1b5e20; /* Deep green for save button */
+    --text-dark-navy: #002244; /* Labels and title */
+}
+
+/* Base Utility for management text */
+.text-navy { color: var(--text-dark-navy); font-weight: 700; }
+
+/* 1. Main Modal Content (The Design Container) */
+.ocean-add-product-modal {
+    background: linear-gradient(180deg, var(--teal-light) 0%, var(--teal-dark) 100%);
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    color: var(--text-dark-navy);
+}
+
+/* 2. Custom Close Button (The Red Circle Cutout) */
+.ocean-add-product-modal .modal-header {
+    position: relative;
+    padding-top: 15px;
+}
+
+.btn-close-custom {
+    position: absolute;
+    top: -15px; /* Pushes it above the border */
+    right: -15px; /* Pushes it outside the right border */
+    background-color: #ff5252; /* Red background */
+    background-image: none; /* overrides default BS icon */
+    opacity: 1; /* prevents fade on hover */
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+/* Adds the white 'X' icon manually */
+.btn-close-custom::before {
+    content: "\f00d"; /* FontAwesome 'X' code */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: white;
+    font-size: 1rem;
+}
+
+.btn-close-custom:hover {
+    background-color: #ff1744;
+    transform: scale(1.1);
+}
+
+/* 3. Left Side Icon styling */
+.large-placeholder-icon {
+    font-size: 7rem;
+    color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+}
+
+/* 4. Form and Input Styling */
+.ocean-input {
+    background: rgba(255, 255, 255, 0.8) !important; /* frosted effect */
+    border-radius: 30px;
+    border: 1px solid rgba(0, 34, 68, 0.1);
+    color: var(--text-dark-navy);
+}
+
+.ocean-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(0, 172, 193, 0.2);
+    border-color: var(--teal-dark);
+}
+
+/* Aligns label and input on one line like image */
+.form-input-pair {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-input-pair label {
+    min-width: 130px; /* aligns text start */
+    margin-bottom: 0;
+}
+
+/* 5. Custom Dropdown Design */
+.custom-select-group {
+    position: relative;
+}
+
+/* The Tag Icon inside the select */
+.select-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #50667a;
+    z-index: 5;
+    font-size: 0.9rem;
+}
+
+.custom-select-control {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    border-radius: 30px;
+    border: 1px solid rgba(0, 34, 68, 0.1);
+    padding: 8px 15px 8px 40px; /* extra left padding for icon */
+    color: #50667a;
+}
+
+/* 6. Action Button Styles */
+
+/* Dark Blue Image Button */
+.btn-add-image {
+    background-color: var(--btn-navy);
+    color: white;
+    border-radius: 30px;
+    padding: 10px 25px;
+    border: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    width: 90%;
+    transition: var(--transition);
+}
+
+.btn-add-image:hover { background-color: #004d40; color: white; }
+
+/* Large Green Save Button (The pill) */
+.btn-save-pill {
+    background-color: var(--btn-green);
+    color: white;
+    border-radius: 30px;
+    padding: 12px 60px; /* Wide padding for pill shape */
+    border: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: var(--transition);
+}
+
+.btn-save-pill:hover { background-color: #1b5e20d0; color: white; transform: scale(1.05); }
+
+/* Removes the default arrows (spinners) from the number input */
+
+/* For Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* For Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.ocean-input.is-invalid {
+    border-color: #ff5252 !important;
+    background-color: rgba(255, 82, 82, 0.1) !important;
+}
