@@ -165,7 +165,10 @@ function setupEventListeners() {
     });
 
     $('#cash-input').on('input', function () {
-        calculateBalance();
+    calculateBalance();
+
+    $(this).removeClass('is-invalid');
+    $('.cash-error').remove();
     });
 }
 
@@ -280,6 +283,19 @@ function placeOrder() {
         return;
     }
 
+    const total = parseFloat($('.total-amount').text().replace(/[^0-9.]/g, "")) || 0;
+    const cash = parseFloat($('#cash-input').val()) || 0;
+
+    if (cash <= 0) {
+        showCashError("Enter cash amount");
+        return;
+    }
+
+    if (cash < total) {
+        showCashError("Insufficient cash");
+        return;
+    }
+
     const orderId = $('#pos-order-id').text();
 
     const subTotal = cart.reduce((acc, item) => acc + (item.price * item.orderQty), 0);
@@ -315,9 +331,20 @@ function placeOrder() {
     $('#cust-contact').text('');
 
     generateNewOrder(); 
-
     renderCart();
     loadOrderTable();
 
     alert("Order Placed Successfully!");
+}
+
+/* ===================== HELPERS ===================== */
+
+function showCashError(message) {
+    const input = $('#cash-input');
+
+    input.addClass('is-invalid');
+
+    $('.cash-error').remove();
+
+    input.after(`<div class="text-danger small mt-1 cash-error">${message}</div>`);
 }
