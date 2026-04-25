@@ -13,12 +13,21 @@ const customerModel = new CustomerModel();
 
 let cart = [];
 
+let orderCounter = 1;
+
 export function initializePos() {
     loadProductGrid();
     loadCustomerDropdown();
     setupEventListeners();
     updateHeaderInfo();
     setInterval(updateHeaderInfo, 1000);
+    generateNewOrder();
+
+    $(document).on('keydown', function(e) {
+        if (e.key === "Tab") {
+            e.preventDefault();
+        }
+    });
 }
 
 /* ===================== PRODUCT GRID ===================== */
@@ -38,7 +47,7 @@ export function loadProductGrid(filter = "") {
         const clone = emptyTemplate.content.cloneNode(true);
 
         $(clone).find('.no-results-msg').html(
-            `We couldn't find anything matching "<strong>${filter}</strong>". <br> Try a different keyword!`
+            `We couldn't find anything matching "<strong>${filter}</strong>".`
         );
 
         itemGrid.append(clone);
@@ -62,9 +71,7 @@ export function loadProductGrid(filter = "") {
         card.attr('data-id', item.id);
         card.find('.product-icon').addClass(icon);
         card.find('.item-name').text(item.name);
-        card.find('.item-price').text(
-            `LKR ${item.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}`
-        );
+        card.find('.item-price').text(`LKR ${item.price.toFixed(2)}`);
         card.find('.qty-stock').text(displayQty);
 
         if (isUnavailable) {
@@ -92,6 +99,7 @@ export function loadCustomerDropdown() {
             `<option value="${customer.id}">${customer.id} - ${customer.name}</option>`
         );
     });
+
 }
 
 /* ===================== HEADER ===================== */
@@ -99,23 +107,8 @@ export function loadCustomerDropdown() {
 function updateHeaderInfo() {
     const now = new Date();
 
-    $('#js-clock').text(
-        now.toLocaleTimeString('en-US', {
-            hour12: true,
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-        }).replace(/:/g, ' : ')
-    );
-
-    $('#js-date').text(
-        now.toLocaleDateString('en-US', {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-        })
-    );
+    $('#js-clock').text(now.toLocaleTimeString());
+    $('#js-date').text(now.toLocaleDateString());
 }
 
 export function loadUserSession(user) {
@@ -147,6 +140,33 @@ function setupEventListeners() {
     $('#pos-discount-input').on('input', function () {
         renderCart();
     });
+
+    $(document).on('click', '.remove-btn', function () {
+        const id = $(this).closest('.cart-row').data('id');
+        cart = cart.filter(i => i.id !== id);
+        renderCart();
+    });
+
+    $(document).on('change', '.customer-selector select', function () {
+        const id = $(this).val();
+
+        if (id === "CUS-000") {
+            $('#cust-name').text("Walk-in Customer");
+            $('#cust-contact').text("-");
+            return;
+        }
+
+        const cust = customerModel.getAll().find(c => c.id === id);
+
+        if (cust) {
+            $('#cust-name').text(cust.name);
+            $('#cust-contact').text(cust.contact);
+        }
+    });
+
+    $('#cash-input').on('input', function () {
+        calculateBalance();
+    });
 }
 
 /* ===================== CART ===================== */
@@ -155,41 +175,37 @@ function addToCart(itemId) {
     const item = itemModel.findById(itemId);
 
     if (item.status !== "Available" || item.qty <= 0) {
-        alert("This item is currently unavailable or out of stock!");
+        alert("Item unavailable!");
         return;
     }
 
     const existingItem = cart.find(c => c.id === itemId);
-    const reservedQty = existingItem ? existingItem.orderQty : 0;
 
-    if (reservedQty < item.qty) {
-        if (existingItem) {
+    if (existingItem) {
+        if (existingItem.orderQty < item.qty) {
             existingItem.orderQty++;
         } else {
-            cart.push({
-                id: item.id,
-                name: item.name,
-                price: item.price,
-                orderQty: 1
-            });
+            alert("Max stock reached");
         }
-        renderCart();
     } else {
-        alert("Not enough stock available!");
+        cart.push({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            orderQty: 1
+        });
     }
+
+    renderCart();
 }
 
 function updateCartQty(itemId, action) {
     const cartItem = cart.find(i => i.id === itemId);
-    if (!cartItem) return;
-
     const stockItem = itemModel.findById(itemId);
 
     if (action === '+') {
         if (cartItem.orderQty < stockItem.qty) {
             cartItem.orderQty++;
-        } else {
-            alert("Max stock reached");
         }
     } else {
         cartItem.orderQty--;
@@ -205,94 +221,103 @@ function updateCartQty(itemId, action) {
 
 function renderCart() {
     const cartList = $('.cart-list');
-    const itemTemplate = document.getElementById('cart-item-template');
-    const emptyTemplate = document.getElementById('empty-cart-template');
+    const template = document.getElementById('cart-item-template');
 
     cartList.empty();
 
     let total = 0;
 
-    if (cart.length === 0) {
-        cartList.append(emptyTemplate.content.cloneNode(true));
-    } else {
-        cart.forEach(item => {
-            const itemSubtotal = item.price * item.orderQty;
-            total += itemSubtotal;
+    cart.forEach(item => {
+        total += item.price * item.orderQty;
 
-            const clone = itemTemplate.content.cloneNode(true);
-            const row = $(clone).find('.cart-row');
+        const clone = template.content.cloneNode(true);
+        const row = $(clone).find('.cart-row');
 
-            row.attr('data-id', item.id);
-            row.find('.cart-item-name').text(item.name);
-            row.find('.qty-val').text(item.orderQty);
+        row.attr('data-id', item.id);
+        row.find('.cart-item-name').text(item.name);
+        row.find('.qty-val').text(item.orderQty);
 
-            cartList.append(row);
-        });
-    }
+        cartList.append(row);
+    });
 
-    const discount = parseFloat($('#pos-discount-input').val()) || 0;
+    let discount = parseFloat($('#pos-discount-input').val()) || 0;
+    if (discount < 0) discount = 0;
+    if (discount > 100) discount = 100;
+
     const netTotal = orderModel.calculateNetTotal(total, discount);
 
-    $('#pos-subtotal').text(`LKR ${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}`);
-    $('.total-amount').text(`LKR ${netTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}`);
+    $('#pos-subtotal').text(`LKR ${total.toFixed(2)}`);
+    $('.total-amount').text(`LKR ${netTotal.toFixed(2)}`);
 
     loadProductGrid();
+    calculateBalance();
+}
+
+/* ===================== BALANCE ===================== */
+
+function calculateBalance() {
+    const total = parseFloat($('.total-amount').text().replace(/[^0-9.]/g, "")) || 0;
+    const cash = parseFloat($('#cash-input').val()) || 0;
+
+    const balance = cash - total;
+    $('#balance').text("LKR " + balance.toFixed(2));
 }
 
 /* ===================== ORDER ===================== */
 
+function generateNewOrder() {
+    const id = "ORD-" + String(orderCounter++).padStart(3, '0');
+    $('#pos-order-id').text(id);
+    $('#pos-order-date').text(new Date().toLocaleDateString());
+}
+
 function placeOrder() {
 
-    const validation = orderModel.validate(
-        cart,
-        $('.customer-selector select').val()
-    );
+    const validation = orderModel.validate(cart, $('.customer-selector select').val());
 
     if (!validation.valid) {
         alert(validation.msg);
         return;
     }
 
-    const selectedCustomerId = $('.customer-selector select').val();
+    const orderId = $('#pos-order-id').text();
 
-    const subTotal = cart.reduce(
-        (acc, item) => acc + (item.price * item.orderQty),
-        0
-    );
+    const subTotal = cart.reduce((acc, item) => acc + (item.price * item.orderQty), 0);
 
-    const discount = parseFloat($('#pos-discount-input').val()) || 0;
+    let discount = parseFloat($('#pos-discount-input').val()) || 0;
 
     const orderDetails = cart.map(item =>
         orderDetailModel.create(item.id, item.orderQty, item.price)
     );
 
-    const newOrder = orderModel.save({
+    orderModel.save({
+        id: orderId,
         date: new Date().toISOString().split('T')[0],
         time: new Date().toLocaleTimeString(),
-        customerId: selectedCustomerId,
+        customerId: $('.customer-selector select').val(),
         adminId: usersDB[0].userId,
-        discount: discount,
+        discount,
         total: orderModel.calculateNetTotal(subTotal, discount),
         orderDetails
     });
 
-    // update stock (same logic)
     cart.forEach(cartItem => {
         const item = itemModel.findById(cartItem.id);
-
         item.qty -= cartItem.orderQty;
-
-        if (item.qty <= 0) {
-            item.status = "Out of Stock";
-        }
+        if (item.qty <= 0) item.status = "Out of Stock";
     });
 
     cart = [];
     $('#pos-discount-input').val('');
+    $('#cash-input').val('');
+    $('#balance').text("LKR 0.00");
+    $('#cust-name').text('');
+    $('#cust-contact').text('');
+
+    generateNewOrder(); 
 
     renderCart();
     loadOrderTable();
 
     alert("Order Placed Successfully!");
-    console.log("Updated Orders List:", orderModel.getAll());
 }
