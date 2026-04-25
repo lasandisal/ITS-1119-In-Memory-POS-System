@@ -24,6 +24,8 @@ function handleLogin() {
     if (user) {
         loadUserSession(user);
 
+        localStorage.setItem("loggedUser", JSON.stringify(user));
+
         $('body').addClass('logged-in');
         $('.nav-item').removeClass('active'); 
         $('.nav-item[data-section="pos"]').addClass('active'); 
@@ -38,6 +40,8 @@ function handleLogin() {
 }
 
 function handleLogout() {
+    localStorage.removeItem("loggedUser"); 
+    
     $('body').removeClass('logged-in');
     $('.nav-item').removeClass('active');
     $('#username').val('');

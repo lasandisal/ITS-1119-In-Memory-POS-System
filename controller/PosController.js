@@ -15,7 +15,16 @@ let cart = [];
 
 let orderCounter = 1;
 
+let currentUser = null;
+
 export function initializePos() {
+
+    const savedUser = JSON.parse(localStorage.getItem("loggedUser"));
+
+    if (savedUser) {
+    loadUserSession(savedUser);
+}
+
     loadProductGrid();
     loadCustomerDropdown();
     setupEventListeners();
@@ -28,6 +37,10 @@ export function initializePos() {
             e.preventDefault();
         }
     });
+
+    
+    
+    
 }
 
 /* ===================== PRODUCT GRID ===================== */
@@ -113,6 +126,7 @@ function updateHeaderInfo() {
 
 export function loadUserSession(user) {
     if (user) {
+        currentUser = user;
         $('.user-name').text(user.name);
         $('.user-role').text(user.role);
     }
@@ -311,7 +325,7 @@ function placeOrder() {
         date: new Date().toISOString().split('T')[0],
         time: new Date().toLocaleTimeString(),
         customerId: $('.customer-selector select').val(),
-        adminId: usersDB[0].userId,
+        adminId: currentUser ? currentUser.userId : null,
         discount,
         total: orderModel.calculateNetTotal(subTotal, discount),
         orderDetails
