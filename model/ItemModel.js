@@ -1,47 +1,50 @@
 import { itemDB } from "../db/database.js";
 import { Item } from "../dto/Item.js";
 
-const nameRegex = /^[A-Za-z0-9 ]{3,20}$/;
-const priceRegex = /^[0-9]+(\.[0-9]{1,2})?$/;
-const qtyRegex = /^[0-9]+$/;
+export class ItemModel {
 
-export function validate(name, price, qty, category) {
-    if (!nameRegex.test(name)) return { valid: false, msg: "Invalid Name (3-20 alphanumeric chars)." };
-    if (!priceRegex.test(price) || parseFloat(price) <= 0) return { valid: false, msg: "Invalid Price." };
-    if (!qtyRegex.test(qty)) return { valid: false, msg: "Invalid Quantity." };
-    if (!category || category === "Category") return { valid: false, msg: "Select a Category." };
-    return { valid: true };
-}
+    validate(name, price, qty, category) {
+        if (name.length < 3) return { valid: false, msg: "Invalid name" };
+        if (price <= 0) return { valid: false, msg: "Invalid price" };
+        if (qty < 0) return { valid: false, msg: "Invalid qty" };
+        if (!category) return { valid: false, msg: "Select category" };
 
-export function save(name, priceRaw, qtyRaw, category) {
-    const price = parseFloat(priceRaw);
-    const qty = parseInt(qtyRaw);
-    const status = qty > 0 ? "Available" : "Out of Stock";
-    const newId = `ITM-${(itemDB.length + 1).toString().padStart(3, '0')}`;
+        return { valid: true };
+    }
 
-    const newItem = new Item(newId, name, price, qty, category, status);
-    itemDB.push(newItem);
-    return newItem;
-}
+    save(name, price, qty, category) {
+        const id = `ITM-${(itemDB.length + 1).toString().padStart(3, '0')}`;
+        const status = qty > 0 ? "Available" : "Out of Stock";
 
-export function updateStatus(id, isChecked) {
-    const item = itemDB.find(i => i.id === id);
-    if (item) {
-        item.status = isChecked ? "Available" : "Unavailable";
+        const item = new Item(id, name, price, qty, category, status);
+        itemDB.push(item);
+
         return item;
     }
-    return null;
-}
 
-export function update(id, name, priceRaw, qtyRaw, category) {
-    const index = itemDB.findIndex(item => item.id === id);
-    if (index !== -1) {
-        itemDB[index].name = name;
-        itemDB[index].price = parseFloat(priceRaw);
-        itemDB[index].qty = parseInt(qtyRaw);
-        itemDB[index].category = category;
-        itemDB[index].status = itemDB[index].qty > 0 ? "Available" : "Out of Stock";
-        return itemDB[index];
+    update(id, name, price, qty, category) {
+        const item = itemDB.find(i => i.id === id);
+        if (!item) return null;
+
+        item.name = name;
+        item.price = price;
+        item.qty = qty;
+        item.category = category;
+        item.status = qty > 0 ? "Available" : "Out of Stock";
+
+        return item;
     }
-    return null;
+
+    toggleStatus(id, status) {
+        const item = itemDB.find(i => i.id === id);
+        if (item) item.status = status ? "Available" : "Unavailable";
+    }
+
+    getAll() {
+        return itemDB;
+    }
+
+    findById(id) {
+        return itemDB.find(i => i.id === id);
+    }
 }
