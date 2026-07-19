@@ -117,9 +117,7 @@ export function executeSearch(query) {
 
     const config = viewConfig[viewName];
 
-    // dashboard or non-searchable views
     if (!config || !config.searchable) return;
 
-    // run correct handler
     config.handler(query);
 }

@@ -43,7 +43,7 @@ export function loadOrderTable(filter = "") {
         row.find('.order-id-cell').text(`#${order.id}`);
         row.find('.order-total-cell').text(order.total.toLocaleString(undefined, { minimumFractionDigits: 2 }));
 
-        row.addClass('order-clickable-row'); // IMPORTANT FIX
+        row.addClass('order-clickable-row'); 
         row.attr('data-order-id', order.id);
 
         tableBody.append(row);

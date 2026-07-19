@@ -29,6 +29,7 @@
 }
 
 .login-logo-side {
+    /* tells a flex item to grow and fill all available space in its container */
     flex: 1;
     display: flex;
     align-items: center;
@@ -42,7 +43,6 @@
     max-width: 250px;
     filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
 }
-
 
 .login-form-side {
     flex: 1.2;
@@ -116,7 +116,7 @@ body.logged-in #login-layer {
     pointer-events: none;
 }
 
-
+/* Look at the <body> tag. If it does NOT have the class .logged-in, find the <main> tag inside it and completely hide it (display: none). */
 body:not(.logged-in) main {
     display: none;
 }
@@ -166,6 +166,7 @@ body {
     background-color: var(--content-navy);
     color: white;
     height: 100vh;
+    /* Do not show scrollbars. */
     overflow: hidden; 
     display: flex;
 }
@@ -181,6 +182,7 @@ body {
     border-right: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     flex-direction: column;
+    /* do not shrink */
     flex-shrink: 0;
     transition: var(--transition);
     position: relative;
@@ -188,6 +190,7 @@ body {
 }
 
 #sidebar::before {
+    /* forces the browser to physically generate this invisible layer */
         content: "";
         position: absolute;
         top: 0;
@@ -277,6 +280,7 @@ body.pos-active .nav-item i { margin-right: 0; font-size: 1.3rem; }
 
 .sidebar-nav-container {
     flex: 1;
+    /* vertical scrolling */
     overflow-y: auto;
     scrollbar-width: none;
 }
@@ -301,6 +305,7 @@ body.pos-active .nav-item i { margin-right: 0; font-size: 1.3rem; }
     transition: var(--transition);
     cursor: pointer;
     border-left: 4px solid transparent;
+    /* Keep all the text on a single line */
     white-space: nowrap;
 }
 
@@ -569,6 +574,8 @@ header {
     padding-bottom: 10px;
     scrollbar-width: none; /* Firefox */
 }
+
+/* tells the browser: "Completely hide the scrollbar UI elements on Chrome, Safari, and newer versions of Microsoft Edge for this container */
 .category-bar::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 
 .cat-pill {
@@ -645,6 +652,7 @@ header {
 .item-card.out-of-stock {
     opacity: 0.6;
     pointer-events: none; 
+    /* wash the color out by 50% */
     filter: grayscale(0.5);
 }
 
